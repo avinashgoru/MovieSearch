@@ -1,0 +1,47 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+@theme {
+  --color-background: #0d0c0c;
+  --color-surface: #171615;
+  --color-surface-elevated: #211f1e;
+  --color-primary: #f2efe9;
+  --color-secondary: #a19d98;
+  --color-muted: #6b6762;
+  --color-border: #2c2a28;
+  --color-accent: #cf663c;
+  --color-accent-soft: rgba(207, 102, 60, 0.15);
+  
+  --font-sans: "Inter", sans-serif;
+  --font-display: "Instrument Serif", serif;
+  --font-mono: "Space Mono", monospace;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-primary antialiased selection:bg-accent/30 selection:text-white;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    /* Subtle grain texture using a CSS radial gradient over the background */
+    background-image: radial-gradient(circle at center, rgba(255,255,255,0.015) 0%, transparent 100%);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight font-normal;
+  }
+}
+
+@layer utilities {
+  .cinematic-gradient {
+    background: linear-gradient(to top, var(--color-background) 10%, transparent 100%);
+  }
+  .image-overlay {
+    background: linear-gradient(to bottom, transparent 40%, var(--color-background) 100%);
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+}
