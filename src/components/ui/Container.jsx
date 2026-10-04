@@ -1,6 +1,8 @@
+import { cn } from '../../utils/cn';
+
 const Container = ({ children, className = '' }) => {
   return (
-    <div className={`mx-auto w-full max-w-7xl px-4 md:px-8 lg:px-12 ${className}`}>
+    <div className={cn("mx-auto w-full max-w-7xl px-4 md:px-8 lg:px-12", className)}>
       {children}
     </div>
   );

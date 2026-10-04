@@ -11,13 +11,16 @@ const MovieCard = ({ movie }) => {
   const saved = isInWatchlist(movie.id);
 
   return (
-    <Link to={`/movie/${movie.id}`} className="block group">
+    <Link 
+      to={`/movie/${movie.id}`} 
+      className="block group rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+    >
       <motion.div
         whileHover="hover"
         initial="initial"
         className="relative flex flex-col gap-4"
       >
-        <div className="relative overflow-hidden rounded-sm">
+        <div className="relative overflow-hidden rounded-sm bg-surface-elevated border border-transparent group-hover:border-border/50 transition-colors">
           {movie.tags && movie.tags.length > 0 && (
             <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
               {movie.tags.map(tag => (
@@ -34,7 +37,7 @@ const MovieCard = ({ movie }) => {
                 e.preventDefault();
                 toggleMovie(movie);
               }}
-              className="bg-background/80 backdrop-blur-sm border border-border/50 text-primary p-1.5 rounded-sm hover:bg-accent hover:text-background hover:border-transparent transition-all"
+              className="bg-background/80 backdrop-blur-sm border border-border/50 text-primary p-1.5 rounded-sm hover:bg-accent hover:text-background hover:border-transparent transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-background active:scale-[0.95]"
               aria-label={saved ? "Remove from Watchlist" : "Add to Watchlist"}
             >
               {saved ? <BookmarkCheck className="w-4 h-4" /> : <BookmarkPlus className="w-4 h-4" />}
