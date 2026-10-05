@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Button from '../components/ui/Button';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 const NotFound = () => {
+  useDocumentTitle('Not Found');
   return (
     <motion.div 
       initial={{ opacity: 0, y: 10 }}

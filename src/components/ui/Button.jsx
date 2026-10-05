@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
 import { cn } from '../../utils/cn';
 
-const Button = forwardRef(({ children, variant = 'primary', className = '', ...props }, ref) => {
+const Button = forwardRef(({ as: Component = 'button', children, variant = 'primary', className = '', ...props }, ref) => {
   const baseStyles = 'inline-flex items-center justify-center rounded-sm font-sans text-sm font-medium transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100';
   
   const variants = {
@@ -11,13 +11,13 @@ const Button = forwardRef(({ children, variant = 'primary', className = '', ...p
   };
 
   return (
-    <button
+    <Component
       ref={ref}
       className={cn(baseStyles, variants[variant], className)}
       {...props}
     >
       {children}
-    </button>
+    </Component>
   );
 });
 

@@ -11,7 +11,7 @@ export const getImageUrl = (path, size = 'w500') => {
   return `${IMAGE_BASE_URL}${size}${path}`;
 };
 
-const fetchApi = async (endpoint, params = {}) => {
+const fetchApi = async (endpoint, params = {}, signal) => {
   if (!API_KEY) {
     throw new Error('API key is missing. Please add VITE_TMDB_API_KEY to your .env file.');
   }
@@ -23,7 +23,7 @@ const fetchApi = async (endpoint, params = {}) => {
   });
 
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}?${queryParams.toString()}`);
+    const response = await fetch(`${API_BASE_URL}${endpoint}?${queryParams.toString()}`, { signal });
     const data = await response.json();
 
     if (!response.ok) {
@@ -40,11 +40,11 @@ const fetchApi = async (endpoint, params = {}) => {
   }
 };
 
-export const fetchGenres = async () => {
+export const fetchGenres = async (signal) => {
   if (Object.keys(genreCache).length > 0) return genreCache;
   
   try {
-    const data = await fetchApi('/genre/movie/list');
+    const data = await fetchApi('/genre/movie/list', {}, signal);
     const genreMap = {};
     data.genres.forEach(g => {
       genreMap[g.id] = g.name;
@@ -80,35 +80,35 @@ const normalizeMovie = (movie, genresMap = {}) => {
   };
 };
 
-export const getTrendingMovies = async () => {
+export const getTrendingMovies = async (signal) => {
   const [data, genresMap] = await Promise.all([
-    fetchApi('/trending/movie/day'),
-    fetchGenres()
+    fetchApi('/trending/movie/day', {}, signal),
+    fetchGenres(signal)
   ]);
   return data.results.map(m => normalizeMovie(m, genresMap));
 };
 
-export const getPopularMovies = async () => {
+export const getPopularMovies = async (signal) => {
   const [data, genresMap] = await Promise.all([
-    fetchApi('/movie/popular'),
-    fetchGenres()
+    fetchApi('/movie/popular', {}, signal),
+    fetchGenres(signal)
   ]);
   return data.results.map(m => normalizeMovie(m, genresMap));
 };
 
-export const getTopRatedMovies = async () => {
+export const getTopRatedMovies = async (signal) => {
   const [data, genresMap] = await Promise.all([
-    fetchApi('/movie/top_rated'),
-    fetchGenres()
+    fetchApi('/movie/top_rated', {}, signal),
+    fetchGenres(signal)
   ]);
   return data.results.map(m => normalizeMovie(m, genresMap));
 };
 
-export const searchMovies = async (query, page = 1) => {
+export const searchMovies = async (query, page = 1, signal) => {
   if (!query) return { results: [], totalPages: 0, totalResults: 0 };
   
   const [data, genresMap] = await Promise.all([
-    fetchApi('/search/movie', { query, page }),
+    fetchApi('/search/movie', { query, page }, signal),
     fetchGenres()
   ]);
   
@@ -120,7 +120,7 @@ export const searchMovies = async (query, page = 1) => {
   };
 };
 
-export const discoverMovies = async (filters = {}) => {
+export const discoverMovies = async (filters = {}, signal) => {
   const params = {
     page: filters.page || 1,
     sort_by: filters.sort || 'popularity.desc',
@@ -131,7 +131,7 @@ export const discoverMovies = async (filters = {}) => {
   if (filters.rating) params['vote_average.gte'] = filters.rating;
 
   const [data, genresMap] = await Promise.all([
-    fetchApi('/discover/movie', params),
+    fetchApi('/discover/movie', params, signal),
     fetchGenres()
   ]);
   
@@ -143,12 +143,15 @@ export const discoverMovies = async (filters = {}) => {
   };
 };
 
-export const getMovieDetails = async (movieId) => {
+export const getMovieDetails = async (movieId, signal) => {
   const data = await fetchApi(`/movie/${movieId}`, {
     append_to_response: 'credits,similar'
-  });
+  }, signal);
   
   const normalized = normalizeMovie(data);
+  
+  const writers = data.credits?.crew?.filter(c => c.department === 'Writing' || c.job === 'Screenplay' || c.job === 'Writer') || [];
+  const uniqueWriters = Array.from(new Set(writers.map(w => w.name))).slice(0, 3);
   
   return {
     ...normalized,
@@ -158,7 +161,8 @@ export const getMovieDetails = async (movieId) => {
       character: c.character,
       profile: getImageUrl(c.profile_path, 'w185')
     })) || [],
-    director: data.credits?.crew?.find(c => c.job === 'Director')?.name || 'Unknown',
+    director: data.credits?.crew?.find(c => c.job === 'Director')?.name || null,
+    writers: uniqueWriters,
     similar: data.similar?.results?.slice(0, 10).map(m => normalizeMovie(m, genreCache)) || []
   };
 };

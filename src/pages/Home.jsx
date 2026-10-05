@@ -9,19 +9,21 @@ import MovieCard from '../components/movie/MovieCard';
 import Button from '../components/ui/Button';
 import { HomeSkeleton } from '../components/ui/LoadingSkeletons';
 import { useHomeMovies } from '../hooks/useHomeMovies';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 const Home = () => {
+  useDocumentTitle();
   const { trending, popular, topRated, featured, isLoading, error } = useHomeMovies();
 
   if (isLoading) {
     return <HomeSkeleton />;
   }
 
-  if (error && !featured && !trending.length && !popular.length && !topRated.length) {
+  if (error && !featured && !trending?.length && !popular?.length && !topRated?.length) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center min-h-[70vh] text-center px-4">
         <p className="font-mono text-sm text-accent uppercase tracking-widest mb-4">Transmission Error</p>
-        <p className="text-secondary max-w-md mb-8">{error}</p>
+        <p className="text-secondary max-w-md mb-8">Some archive records could not be retrieved.</p>
         <Button onClick={() => window.location.reload()} variant="secondary">Try Again</Button>
       </div>
     );
@@ -36,7 +38,13 @@ const Home = () => {
       className="flex-1 flex flex-col bg-background"
     >
       <div className="mb-24 md:mb-32">
-        {featured && <FeaturedMovie movie={featured} />}
+        {featured ? (
+          <FeaturedMovie movie={featured} />
+        ) : (
+          <div className="w-full min-h-[70vh] flex items-center justify-center bg-surface-elevated">
+             <p className="font-mono text-sm tracking-widest text-secondary uppercase">Featured Record Unavailable</p>
+          </div>
+        )}
       </div>
 
       <Container className="flex flex-col gap-24 md:gap-32 pb-32">
@@ -48,9 +56,9 @@ const Home = () => {
             transition={{ duration: 0.6 }}
           >
             <SectionHeading 
-              number="01"
+              number="THIS WEEK / CURRENT SCREENINGS"
               title="Trending Now"
-              subtitle="A curated selection of cinema currently capturing the cultural conversation."
+              subtitle="Popular across the archive."
               className="border-t border-border/50 pt-8"
             />
             <MovieGrid>
@@ -69,9 +77,9 @@ const Home = () => {
             transition={{ duration: 0.6 }}
           >
             <SectionHeading 
-              number="02"
+              number="ALL TIME"
               title="Popular"
-              subtitle="The films defining this era, frequently requested from the archive."
+              subtitle="The most frequently requested films from the collection."
               className="border-t border-border/50 pt-8"
             />
             <MovieGrid>
@@ -90,9 +98,9 @@ const Home = () => {
             transition={{ duration: 0.6 }}
           >
             <SectionHeading 
-              number="03"
-              title="Top Rated"
-              subtitle="Enduring favorites and the highest-rated cinematic achievements."
+              number="ACCLAIMED"
+              title="The Canon"
+              subtitle="The highest-rated cinematic achievements."
               className="border-t border-border/50 pt-8"
             />
             <MovieGrid>
@@ -111,12 +119,12 @@ const Home = () => {
           transition={{ duration: 0.6 }}
           className="flex flex-col items-center justify-center text-center pt-16 pb-8 border-t border-border/50"
         >
-          <h2 className="font-display text-4xl md:text-5xl text-primary mb-4">Deepen Your Search</h2>
+          <h2 className="font-display text-4xl md:text-5xl text-primary mb-4">The Archive Continues</h2>
           <p className="font-sans text-secondary max-w-md mx-auto mb-8">
-            Access the complete collection. Filter by genre, year, and rating to find exactly what you're looking for.
+            Thousands of films. One place to explore.
           </p>
           <Button as={Link} to="/discover" variant="primary" className="flex items-center gap-3">
-            EXPLORE THE ARCHIVE
+            EXPLORE DISCOVER
             <ArrowRight className="w-4 h-4" />
           </Button>
         </motion.section>

@@ -11,8 +11,10 @@ import { MovieGridSkeleton } from '../components/ui/LoadingSkeletons';
 import { DiscoverFilters } from '../components/discover/DiscoverFilters';
 import { Pagination } from '../components/ui/Pagination';
 import { useDiscoverMovies } from '../hooks/useDiscoverMovies';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 const Discover = () => {
+  useDocumentTitle('Discover');
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Map URL params to filters object

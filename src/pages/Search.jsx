@@ -10,10 +10,13 @@ import { MovieGridSkeleton } from '../components/ui/LoadingSkeletons';
 import { useMovieSearch } from '../hooks/useMovieSearch';
 import { useDebounce } from '../hooks/useDebounce';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
+  
+  useDocumentTitle(initialQuery ? `Search: ${initialQuery}` : 'Search');
   
   const [inputValue, setInputValue] = useState(initialQuery);
   const debouncedQuery = useDebounce(inputValue, 500);

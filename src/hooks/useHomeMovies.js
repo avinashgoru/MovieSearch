@@ -13,6 +13,7 @@ export const useHomeMovies = () => {
 
   useEffect(() => {
     let isMounted = true;
+    const controller = new AbortController();
 
     const fetchHomeData = async () => {
       setIsLoading(true);
@@ -20,9 +21,9 @@ export const useHomeMovies = () => {
       
       try {
         const results = await Promise.allSettled([
-          getTrendingMovies(),
-          getPopularMovies(),
-          getTopRatedMovies()
+          getTrendingMovies(controller.signal),
+          getPopularMovies(controller.signal),
+          getTopRatedMovies(controller.signal)
         ]);
         
         if (!isMounted) return;
@@ -46,6 +47,7 @@ export const useHomeMovies = () => {
           featured
         });
       } catch (err) {
+        if (err.name === 'AbortError') return;
         if (isMounted) setError(err.message || 'Failed to load movies.');
       } finally {
         if (isMounted) setIsLoading(false);
@@ -56,6 +58,7 @@ export const useHomeMovies = () => {
 
     return () => {
       isMounted = false;
+      controller.abort();
     };
   }, []);
 

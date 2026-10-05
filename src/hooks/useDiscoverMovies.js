@@ -9,18 +9,20 @@ export const useDiscoverMovies = (filters) => {
 
   useEffect(() => {
     let isMounted = true;
+    const controller = new AbortController();
 
     const fetchDiscover = async () => {
       setIsLoading(true);
       setError(null);
 
       try {
-        const data = await discoverMovies(filters);
+        const data = await discoverMovies(filters, controller.signal);
         if (isMounted) {
           setResults(data.results);
           setPagination({ totalPages: data.totalPages, totalResults: data.totalResults });
         }
       } catch (err) {
+        if (err.name === 'AbortError') return;
         if (isMounted) setError(err.message || 'Failed to discover movies.');
       } finally {
         if (isMounted) setIsLoading(false);
@@ -31,6 +33,7 @@ export const useDiscoverMovies = (filters) => {
 
     return () => {
       isMounted = false;
+      controller.abort();
     };
   }, [filters.page, filters.sort, filters.genre, filters.year, filters.rating]);
 

@@ -1,7 +1,9 @@
 import { useParams } from 'react-router-dom';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 const Genre = () => {
   const { genreId } = useParams();
+  useDocumentTitle('Genre');
   
   return (
     <div className="py-24 px-8 text-center">

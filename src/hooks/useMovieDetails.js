@@ -8,6 +8,7 @@ export const useMovieDetails = (id) => {
 
   useEffect(() => {
     let isMounted = true;
+    const controller = new AbortController();
 
     const fetchDetails = async () => {
       if (!id) return;
@@ -17,11 +18,12 @@ export const useMovieDetails = (id) => {
       setMovie(null); // Clear previous
 
       try {
-        const data = await getMovieDetails(id);
+        const data = await getMovieDetails(id, controller.signal);
         if (isMounted) {
           setMovie(data);
         }
       } catch (err) {
+        if (err.name === 'AbortError') return;
         if (isMounted) setError(err.message || 'Failed to load movie details.');
       } finally {
         if (isMounted) setIsLoading(false);
@@ -32,6 +34,7 @@ export const useMovieDetails = (id) => {
 
     return () => {
       isMounted = false;
+      controller.abort();
     };
   }, [id]);
 

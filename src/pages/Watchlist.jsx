@@ -7,8 +7,10 @@ import MovieGrid from '../components/movie/MovieGrid';
 import MovieCard from '../components/movie/MovieCard';
 import Button from '../components/ui/Button';
 import { useWatchlist } from '../contexts/WatchlistContext';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 const Watchlist = () => {
+  useDocumentTitle('Watchlist');
   const { watchlist, clear } = useWatchlist();
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 

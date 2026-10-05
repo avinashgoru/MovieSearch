@@ -9,6 +9,7 @@ export const useMovieSearch = (query, page = 1) => {
 
   useEffect(() => {
     let isMounted = true;
+    const controller = new AbortController();
 
     const fetchSearch = async () => {
       if (!query.trim()) {
@@ -22,12 +23,13 @@ export const useMovieSearch = (query, page = 1) => {
       setError(null);
 
       try {
-        const data = await searchMovies(query, page);
+        const data = await searchMovies(query, page, controller.signal);
         if (isMounted) {
           setResults(data.results);
           setPagination({ totalPages: data.totalPages, totalResults: data.totalResults });
         }
       } catch (err) {
+        if (err.name === 'AbortError') return;
         if (isMounted) setError(err.message || 'Failed to search movies.');
       } finally {
         if (isMounted) setIsLoading(false);
@@ -38,6 +40,7 @@ export const useMovieSearch = (query, page = 1) => {
 
     return () => {
       isMounted = false;
+      controller.abort();
     };
   }, [query, page]);
 
