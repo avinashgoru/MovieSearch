@@ -5,8 +5,8 @@ A full-stack cinematic discovery platform combining a retro archival aesthetic w
 **Status:**
 
 ```text
-v1.0.0
-Release Candidate / Production Ready
+v1.1.0
+Production Release
 ```
 
 ## Overview
@@ -60,6 +60,23 @@ Cinema Archive is a production-quality movie discovery platform designed for fil
 - User-specific watchlists
 - Optimistic updates
 - Safe migration from legacy local storage where applicable
+
+### Recently Viewed
+
+- Automatic cinema history tracking
+- Fast, unblocking asynchronous history updates
+- Persistent deduplication
+- Automatic history pruning limit (20 entries)
+- Deep genre caching for preference scoring
+
+### Curated For You (Personalized Recommendations)
+
+- 100% Deterministic Engine (Zero AI/Blackbox APIs)
+- Recency-decay algorithmic scoring
+- High-intent watchlist weighting
+- Seen-candidate filtering
+- Safe offline/fallback handling
+- Dynamic explanation headers
 
 ### UX
 
@@ -273,6 +290,17 @@ DELETE /api/watchlist/:movieId
 DELETE /api/watchlist
 ```
 
+### History & Personalization API
+
+Manages user viewing history and preference-based discovery.
+
+```text
+GET    /api/recently-viewed
+POST   /api/recently-viewed
+DELETE /api/recently-viewed
+GET    /api/recommendations
+```
+
 ## Environment Variables
 
 These variables must remain server-side and must never be committed. Create a `.env` file referencing `.env.example`:
@@ -367,16 +395,12 @@ Login                    PASS
 Session /me              PASS
 Logout                   PASS
 Watchlist                PASS
+Recently Viewed          PASS
+Recommendations          PASS
 Production build         PASS
 ```
 
 ## Future Roadmap
-
-### v1.1 (Planned)
-
-- Recently Viewed
-- Better recommendation logic
-- More advanced discovery
 
 ### v1.2 (Planned)
 
@@ -389,7 +413,6 @@ Production build         PASS
 - Reviews
 - Social watchlists
 - Public profiles
-- Personalized recommendations
 
 ## Contributing
 

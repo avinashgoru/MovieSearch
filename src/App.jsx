@@ -12,6 +12,7 @@ const Discover = React.lazy(() => import('./pages/Discover'));
 const MovieDetails = React.lazy(() => import('./pages/MovieDetails'));
 const Genre = React.lazy(() => import('./pages/Genre'));
 const Watchlist = React.lazy(() => import('./pages/Watchlist'));
+const RecentlyViewed = React.lazy(() => import('./pages/RecentlyViewed'));
 const Login = React.lazy(() => import('./pages/Login'));
 const Register = React.lazy(() => import('./pages/Register'));
 const NotFound = React.lazy(() => import('./pages/NotFound'));
@@ -40,6 +41,11 @@ function App() {
               <Route path="watchlist" element={
                 <ProtectedRoute>
                   <Watchlist />
+                </ProtectedRoute>
+              } />
+              <Route path="recently-viewed" element={
+                <ProtectedRoute>
+                  <RecentlyViewed />
                 </ProtectedRoute>
               } />
               <Route path="*" element={<NotFound />} />

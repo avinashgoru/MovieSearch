@@ -13,7 +13,9 @@ import { useMovieDetails } from '../hooks/useMovieDetails';
 import { useWatchlist } from '../contexts/WatchlistContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { addRecentlyViewed } from '../services/recentlyViewedApi';
 import { cn } from '../utils/cn';
+import { useEffect } from 'react';
 
 const MovieDetails = () => {
   const { id } = useParams();
@@ -26,6 +28,27 @@ const MovieDetails = () => {
   useDocumentTitle(movie?.title || '');
   
   const saved = movie ? isInWatchlist(movie.id) : false;
+
+  useEffect(() => {
+    if (movie && isAuthenticated) {
+      const abortController = new AbortController();
+      addRecentlyViewed({
+        movieId: movie.id,
+        title: movie.title,
+        poster: movie.poster,
+        backdrop: movie.backdrop,
+        rating: movie.rating,
+        releaseYear: movie.releaseYear,
+        genres: movie.genres
+      }, abortController.signal).catch(() => {
+        // Silently fail if recently viewed fails to record (non-blocking)
+      });
+
+      return () => {
+        abortController.abort();
+      };
+    }
+  }, [movie, isAuthenticated]);
 
   const handleToggleWatchlist = () => {
     if (!isAuthenticated) {

@@ -10,6 +10,8 @@ import healthRoutes from './routes/healthRoutes.js';
 import movieRoutes from './routes/movieRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import watchlistRoutes from './routes/watchlistRoutes.js';
+import recentlyViewedRoutes from './routes/recentlyViewedRoutes.js';
+import recommendationRoutes from './routes/recommendationRoutes.js';
 import { requireDb } from './middleware/dbCheck.js';
 
 dotenv.config();
@@ -30,6 +32,8 @@ app.use(cookieParser());
 // Routes
 app.use('/api/auth', requireDb, authRoutes);
 app.use('/api/watchlist', requireDb, watchlistRoutes);
+app.use('/api/recently-viewed', requireDb, recentlyViewedRoutes);
+app.use('/api/recommendations', requireDb, recommendationRoutes);
 app.use('/api/health', healthRoutes);
 app.use('/api/movies', movieRoutes);
 

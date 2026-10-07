@@ -7,13 +7,19 @@ import SectionHeading from '../components/sections/SectionHeading';
 import MovieGrid from '../components/movie/MovieGrid';
 import MovieCard from '../components/movie/MovieCard';
 import Button from '../components/ui/Button';
-import { HomeSkeleton } from '../components/ui/LoadingSkeletons';
+import { HomeSkeleton, MovieGridSkeleton } from '../components/ui/LoadingSkeletons';
 import { useHomeMovies } from '../hooks/useHomeMovies';
+import { useRecentlyViewed } from '../hooks/useRecentlyViewed';
+import { useRecommendations } from '../hooks/useRecommendations';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { useAuth } from '../contexts/AuthContext';
 
 const Home = () => {
   useDocumentTitle();
+  const { isAuthenticated } = useAuth();
   const { trending, popular, topRated, featured, isLoading, error } = useHomeMovies();
+  const { history, isLoading: isHistoryLoading } = useRecentlyViewed();
+  const { recommendations, reason, isLoading: isRecLoading } = useRecommendations();
 
   if (isLoading) {
     return <HomeSkeleton />;
@@ -48,6 +54,62 @@ const Home = () => {
       </div>
 
       <Container className="flex flex-col gap-24 md:gap-32 pb-32">
+        {!isHistoryLoading && history?.length > 0 && (
+          <motion.section 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="flex items-end justify-between border-t border-border/50 pt-8 mb-8">
+              <SectionHeading 
+                number="ARCHIVE HISTORY"
+                title="Your Recent Screenings"
+                subtitle="Films you've recently explored."
+                className="border-none pt-0 mb-0"
+              />
+              <Button as={Link} to="/recently-viewed" variant="ghost" className="hidden sm:flex text-sm text-secondary hover:text-primary">
+                View All History
+              </Button>
+            </div>
+            <MovieGrid>
+              {history.slice(0, 10).map((movie, i) => (
+                <MovieCard key={`history-${movie.id}-${i}`} movie={movie} />
+              ))}
+            </MovieGrid>
+            <div className="mt-8 flex justify-center sm:hidden">
+              <Button as={Link} to="/recently-viewed" variant="secondary" className="w-full">
+                View All History
+              </Button>
+            </div>
+          </motion.section>
+        )}
+
+        {isAuthenticated && (isRecLoading || recommendations?.length > 0) && (
+          <motion.section 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <SectionHeading 
+              number="CURATED FOR YOU"
+              title="From Your Archive"
+              subtitle={reason || "Films selected from your cinema history."}
+              className="border-t border-border/50 pt-8"
+            />
+            {isRecLoading ? (
+              <MovieGridSkeleton count={5} />
+            ) : (
+              <MovieGrid>
+                {recommendations.map((movie, i) => (
+                  <MovieCard key={`rec-${movie.id}-${i}`} movie={movie} />
+                ))}
+              </MovieGrid>
+            )}
+          </motion.section>
+        )}
+
         {trending?.length > 0 && (
           <motion.section 
             initial={{ opacity: 0, y: 20 }}

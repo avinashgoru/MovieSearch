@@ -33,6 +33,10 @@ const Navbar = () => {
     { name: 'Watchlist', path: '/watchlist', count: watchlist.length }
   ];
 
+  if (isAuthenticated) {
+    navLinks.push({ name: 'History', path: '/recently-viewed' });
+  }
+
   return (
     <>
       <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/90 backdrop-blur-md">
