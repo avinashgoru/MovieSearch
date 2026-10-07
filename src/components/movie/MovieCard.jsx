@@ -1,13 +1,17 @@
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { BookmarkPlus, BookmarkCheck } from 'lucide-react';
 import MoviePoster from './MoviePoster';
 import MovieMeta from './MovieMeta';
 import Badge from '../ui/Badge';
 import { useWatchlist } from '../../contexts/WatchlistContext';
+import { useAuth } from '../../contexts/AuthContext';
 
 const MovieCard = ({ movie }) => {
   const { isInWatchlist, toggleMovie } = useWatchlist();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const saved = isInWatchlist(movie.id);
 
   return (
@@ -35,6 +39,10 @@ const MovieCard = ({ movie }) => {
             <button
               onClick={(e) => {
                 e.preventDefault();
+                if (!isAuthenticated) {
+                  navigate('/login', { state: { from: location } });
+                  return;
+                }
                 toggleMovie(movie);
               }}
               className="bg-background/80 backdrop-blur-sm border border-border/50 text-primary p-1.5 rounded-sm hover:bg-accent hover:text-background hover:border-transparent transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-background active:scale-[0.95]"

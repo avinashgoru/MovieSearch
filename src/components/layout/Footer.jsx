@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import Container from '../ui/Container';
 
+const CURRENT_YEAR = new Date().getFullYear();
+
 const Footer = () => {
   return (
     <footer className="border-t border-border mt-auto pt-16 pb-8 bg-surface">
@@ -10,7 +12,7 @@ const Footer = () => {
             <Link to="/" className="font-display text-3xl mb-4 hover:text-accent transition-colors block">Kino.</Link>
             <p className="font-mono text-[10px] text-muted tracking-widest uppercase">
               CINEMA EDITION <br/>
-              EST. {new Date().getFullYear()}
+              EST. {CURRENT_YEAR}
             </p>
           </div>
           

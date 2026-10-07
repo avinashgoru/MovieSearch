@@ -1,4 +1,4 @@
-import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { BookmarkPlus, BookmarkCheck, ArrowLeft, Share2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Container from '../components/ui/Container';
@@ -11,18 +11,29 @@ import Badge from '../components/ui/Badge';
 import { DetailsSkeleton } from '../components/ui/LoadingSkeletons';
 import { useMovieDetails } from '../hooks/useMovieDetails';
 import { useWatchlist } from '../contexts/WatchlistContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { cn } from '../utils/cn';
 
 const MovieDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { movie, isLoading, error } = useMovieDetails(id);
   const { isInWatchlist, toggleMovie } = useWatchlist();
+  const { isAuthenticated } = useAuth();
   
   useDocumentTitle(movie?.title || '');
   
   const saved = movie ? isInWatchlist(movie.id) : false;
+
+  const handleToggleWatchlist = () => {
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: location } });
+      return;
+    }
+    toggleMovie(movie);
+  };
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -32,7 +43,7 @@ const MovieDetails = () => {
           text: `Check out ${movie.title} on Kino Archive.`,
           url: window.location.href,
         });
-      } catch (err) {
+      } catch {
         // User cancelled or share failed silently
       }
     } else {
@@ -120,7 +131,7 @@ const MovieDetails = () => {
               className="hidden lg:flex flex-col gap-3"
             >
               <Button 
-                onClick={() => toggleMovie(movie)}
+                onClick={handleToggleWatchlist}
                 variant={saved ? "secondary" : "primary"}
                 className={cn("w-full flex items-center justify-center gap-2", saved && "bg-surface-elevated border-border")}
               >
@@ -190,7 +201,7 @@ const MovieDetails = () => {
               {/* Mobile/Tablet Actions */}
               <div className="flex lg:hidden flex-col sm:flex-row gap-3 mb-10">
                 <Button 
-                  onClick={() => toggleMovie(movie)}
+                  onClick={handleToggleWatchlist}
                   variant={saved ? "secondary" : "primary"}
                   className="flex-1 flex items-center justify-center gap-2"
                 >

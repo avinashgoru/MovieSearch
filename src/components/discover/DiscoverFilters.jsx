@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import { Filter, X } from 'lucide-react';
+import { Filter } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Button from '../ui/Button';
 import { useGenres } from '../../hooks/useGenres';
-import { cn } from '../../utils/cn';
 
 const YEARS = Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i);
 const RATINGS = [
@@ -19,6 +18,73 @@ const SORTS = [
   { label: 'Oldest First', value: 'primary_release_date.asc' }
 ];
 
+const FilterContent = ({ filters, genres, handleChange, onClear }) => (
+  <div className="flex flex-col gap-8 md:flex-row md:items-end md:gap-6 w-full">
+    <div className="flex flex-col gap-2 flex-1">
+      <label className="font-mono text-xs uppercase tracking-widest text-secondary">Genre</label>
+      <select 
+        value={filters.genre} 
+        onChange={(e) => handleChange('genre', e.target.value)}
+        className="bg-surface-elevated border border-border/50 text-primary font-sans text-sm p-3 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none rounded-sm cursor-pointer"
+      >
+        <option value="">Any Genre</option>
+        {genres.map(g => (
+          <option key={g.id} value={g.id}>{g.name}</option>
+        ))}
+      </select>
+    </div>
+
+    <div className="flex flex-col gap-2 flex-1">
+      <label className="font-mono text-xs uppercase tracking-widest text-secondary">Year</label>
+      <select 
+        value={filters.year} 
+        onChange={(e) => handleChange('year', e.target.value)}
+        className="bg-surface-elevated border border-border/50 text-primary font-sans text-sm p-3 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none rounded-sm cursor-pointer"
+      >
+        <option value="">Any Year</option>
+        {YEARS.map(y => (
+          <option key={y} value={y}>{y}</option>
+        ))}
+      </select>
+    </div>
+
+    <div className="flex flex-col gap-2 flex-1">
+      <label className="font-mono text-xs uppercase tracking-widest text-secondary">Rating</label>
+      <select 
+        value={filters.rating} 
+        onChange={(e) => handleChange('rating', e.target.value)}
+        className="bg-surface-elevated border border-border/50 text-primary font-sans text-sm p-3 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none rounded-sm cursor-pointer"
+      >
+        {RATINGS.map(r => (
+          <option key={r.value} value={r.value}>{r.label}</option>
+        ))}
+      </select>
+    </div>
+
+    <div className="flex flex-col gap-2 flex-1">
+      <label className="font-mono text-xs uppercase tracking-widest text-secondary">Sort</label>
+      <select 
+        value={filters.sort} 
+        onChange={(e) => handleChange('sort', e.target.value)}
+        className="bg-surface-elevated border border-border/50 text-primary font-sans text-sm p-3 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none rounded-sm cursor-pointer"
+      >
+        {SORTS.map(s => (
+          <option key={s.value} value={s.value}>{s.label}</option>
+        ))}
+      </select>
+    </div>
+
+    <div className="flex items-center pt-2 md:pt-0">
+      <button
+        onClick={onClear}
+        className="font-mono text-xs uppercase tracking-widest text-secondary hover:text-primary transition-colors py-3 md:px-4"
+      >
+        Clear
+      </button>
+    </div>
+  </div>
+);
+
 export const DiscoverFilters = ({ filters, onFilterChange, onClear }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { genres } = useGenres();
@@ -28,73 +94,6 @@ export const DiscoverFilters = ({ filters, onFilterChange, onClear }) => {
   const handleChange = (key, value) => {
     onFilterChange({ [key]: value });
   };
-
-  const FilterContent = () => (
-    <div className="flex flex-col gap-8 md:flex-row md:items-end md:gap-6 w-full">
-      <div className="flex flex-col gap-2 flex-1">
-        <label className="font-mono text-xs uppercase tracking-widest text-secondary">Genre</label>
-        <select 
-          value={filters.genre} 
-          onChange={(e) => handleChange('genre', e.target.value)}
-          className="bg-surface-elevated border border-border/50 text-primary font-sans text-sm p-3 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none rounded-sm cursor-pointer"
-        >
-          <option value="">Any Genre</option>
-          {genres.map(g => (
-            <option key={g.id} value={g.id}>{g.name}</option>
-          ))}
-        </select>
-      </div>
-
-      <div className="flex flex-col gap-2 flex-1">
-        <label className="font-mono text-xs uppercase tracking-widest text-secondary">Year</label>
-        <select 
-          value={filters.year} 
-          onChange={(e) => handleChange('year', e.target.value)}
-          className="bg-surface-elevated border border-border/50 text-primary font-sans text-sm p-3 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none rounded-sm cursor-pointer"
-        >
-          <option value="">Any Year</option>
-          {YEARS.map(y => (
-            <option key={y} value={y}>{y}</option>
-          ))}
-        </select>
-      </div>
-
-      <div className="flex flex-col gap-2 flex-1">
-        <label className="font-mono text-xs uppercase tracking-widest text-secondary">Rating</label>
-        <select 
-          value={filters.rating} 
-          onChange={(e) => handleChange('rating', e.target.value)}
-          className="bg-surface-elevated border border-border/50 text-primary font-sans text-sm p-3 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none rounded-sm cursor-pointer"
-        >
-          {RATINGS.map(r => (
-            <option key={r.value} value={r.value}>{r.label}</option>
-          ))}
-        </select>
-      </div>
-
-      <div className="flex flex-col gap-2 flex-1">
-        <label className="font-mono text-xs uppercase tracking-widest text-secondary">Sort</label>
-        <select 
-          value={filters.sort} 
-          onChange={(e) => handleChange('sort', e.target.value)}
-          className="bg-surface-elevated border border-border/50 text-primary font-sans text-sm p-3 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none rounded-sm cursor-pointer"
-        >
-          {SORTS.map(s => (
-            <option key={s.value} value={s.value}>{s.label}</option>
-          ))}
-        </select>
-      </div>
-
-      <div className="flex items-center pt-2 md:pt-0">
-        <button
-          onClick={onClear}
-          className="font-mono text-xs uppercase tracking-widest text-secondary hover:text-primary transition-colors py-3 md:px-4"
-        >
-          Clear
-        </button>
-      </div>
-    </div>
-  );
 
   return (
     <div className="mb-16">
@@ -120,7 +119,7 @@ export const DiscoverFilters = ({ filters, onFilterChange, onClear }) => {
       {/* Desktop Filters */}
       <div className="hidden md:block bg-surface p-6 border border-border/50 rounded-sm">
         <h3 className="font-mono text-xs uppercase tracking-widest text-secondary mb-6 border-b border-border/50 pb-2">Filter Archive</h3>
-        <FilterContent />
+        <FilterContent filters={filters} genres={genres} handleChange={handleChange} onClear={onClear} />
       </div>
 
       {/* Mobile Drawer/Expand */}
@@ -133,7 +132,7 @@ export const DiscoverFilters = ({ filters, onFilterChange, onClear }) => {
             className="md:hidden overflow-hidden"
           >
             <div className="bg-surface p-6 border border-border/50 rounded-sm mb-6">
-              <FilterContent />
+              <FilterContent filters={filters} genres={genres} handleChange={handleChange} onClear={onClear} />
             </div>
           </motion.div>
         )}

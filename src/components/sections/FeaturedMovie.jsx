@@ -7,6 +7,8 @@ import Badge from '../ui/Badge';
 import { useWatchlist } from '../../contexts/WatchlistContext';
 import { cn } from '../../utils/cn';
 
+const CURRENT_MONTH = new Date().getMonth() + 1;
+
 const FeaturedMovie = ({ movie }) => {
   const { isInWatchlist, toggleMovie } = useWatchlist();
   const saved = isInWatchlist(movie.id);
@@ -40,7 +42,7 @@ const FeaturedMovie = ({ movie }) => {
                 Featured / Archive
               </span>
               <span className="font-mono text-[10px] text-secondary uppercase tracking-widest">
-                Vol. {new Date().getMonth() + 1}
+                Vol. {CURRENT_MONTH}
               </span>
             </div>
 

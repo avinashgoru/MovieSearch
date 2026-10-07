@@ -4,10 +4,12 @@ import { Search, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Container from '../ui/Container';
 import { useWatchlist } from '../../contexts/WatchlistContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { cn } from '../../utils/cn';
 
 const Navbar = () => {
   const { watchlist } = useWatchlist();
+  const { user, isAuthenticated, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
 
@@ -98,6 +100,35 @@ const Navbar = () => {
                 <Search className="h-5 w-5" />
               </NavLink>
 
+              <div className="hidden md:flex items-center gap-4 ml-4 border-l border-border/50 pl-4">
+                {isAuthenticated ? (
+                  <>
+                    <span className="font-mono text-xs text-secondary truncate max-w-[100px]" title={user?.name}>{user?.name}</span>
+                    <button 
+                      onClick={logout}
+                      className="font-mono text-xs uppercase tracking-widest text-secondary hover:text-accent transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded-sm"
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link 
+                      to="/login"
+                      className="font-mono text-xs uppercase tracking-widest text-secondary hover:text-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded-sm"
+                    >
+                      Sign In
+                    </Link>
+                    <Link 
+                      to="/register"
+                      className="font-mono text-xs uppercase tracking-widest bg-primary text-background px-3 py-1.5 hover:bg-white transition-colors rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+                    >
+                      Join
+                    </Link>
+                  </>
+                )}
+              </div>
+
               <button 
                 className="md:hidden p-2 text-secondary hover:text-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded-sm"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -139,6 +170,44 @@ const Navbar = () => {
                   )}
                 </NavLink>
               ))}
+              
+              <div className="mt-8 pt-8 border-t border-border/50 flex flex-col gap-6">
+                {isAuthenticated ? (
+                  <>
+                    <div className="font-mono text-sm text-secondary">Signed in as <span className="text-primary">{user?.name}</span></div>
+                    <button 
+                      onClick={() => {
+                        logout();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="font-display text-4xl text-left text-secondary hover:text-accent transition-colors"
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <NavLink 
+                      to="/login" 
+                      className={({ isActive }) => cn(
+                        "font-display text-4xl transition-colors",
+                        isActive ? "text-accent" : "text-secondary hover:text-primary"
+                      )}
+                    >
+                      Sign In
+                    </NavLink>
+                    <NavLink 
+                      to="/register" 
+                      className={({ isActive }) => cn(
+                        "font-display text-4xl transition-colors",
+                        isActive ? "text-accent" : "text-secondary hover:text-primary"
+                      )}
+                    >
+                      Create Account
+                    </NavLink>
+                  </>
+                )}
+              </div>
             </nav>
             <div className="mt-auto pb-12 font-mono text-[10px] text-muted tracking-widest uppercase border-t border-border/50 pt-8 mt-16">
               Kino Archive Edition

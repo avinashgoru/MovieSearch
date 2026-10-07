@@ -16,7 +16,14 @@ export const useDiscoverMovies = (filters) => {
       setError(null);
 
       try {
-        const data = await discoverMovies(filters, controller.signal);
+        const fetchFilters = { 
+          page: filters.page, 
+          sort: filters.sort, 
+          genre: filters.genre, 
+          year: filters.year, 
+          rating: filters.rating 
+        };
+        const data = await discoverMovies(fetchFilters, controller.signal);
         if (isMounted) {
           setResults(data.results);
           setPagination({ totalPages: data.totalPages, totalResults: data.totalResults });
