@@ -129,15 +129,14 @@ Screenshots coming soon
 
 ## Architecture
 
-```mermaid
-flowchart TD
-    A[React + Vite Frontend] --> B[Express API]
+```mermaid id="xwq1y2"
+flowchart LR
+    A[React + Vite] --> B[Express API]
 
     B --> C[MongoDB Atlas]
     B --> D[TMDB API]
 
-    A --> E[JWT HttpOnly Cookie]
-    E --> B
+    B --> E[JWT Authentication]
 ```
 
 The browser acts strictly as a presentation layer communicating solely with the internal Express API. The browser must **NOT** communicate directly with TMDB.
